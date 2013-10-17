@@ -25,6 +25,7 @@
 
 # Default value, if not overridden else where.
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR ?= device/asus/grouper/bluetooth
+ 
 
 TARGET_BOARD_PLATFORM := tegra3
 TARGET_TEGRA_VERSION := t30
@@ -77,3 +78,25 @@ endif
 NEED_WORKAROUND_CORTEX_A9_745320 := true
 
 BOARD_USES_GROUPER_MODULES := true
+
+
+BOARD_SEPOLICY_DIRS += \
+  device/asus/grouper/sepolicy
+
+BOARD_SEPOLICY_UNION += \
+  file_contexts \
+  genfs_contexts \
+  app.te \
+  btmacreader.te \
+  device.te \
+  drmserver.te \
+  file.te \
+  gpsd.te \
+  init_shell.te \
+  keystore.te \
+  mediaserver.te \
+  rild.te \
+  sensors_config.te \
+  surfaceflinger.te \
+  system.te \
+  zygote.te 
