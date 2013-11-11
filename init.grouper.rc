@@ -18,6 +18,11 @@ on init
     symlink /storage/emulated/legacy /storage/sdcard0
     symlink /mnt/shell/emulated/0 /storage/emulated/legacy
 
+    # create directory for mounting usb drives
+    mkdir /storage/usbdisk 0666 system system
+    symlink /storage/usbdisk /mnt/usbdisk
+    symlink /mnt/usbdisk /usbdisk
+
 on early-boot
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
@@ -61,6 +66,9 @@ on post-fs-data
     mkdir /data/lightsensor 751 system system
     mkdir /data/calibration
     mkdir /data/amit
+
+    # btmacreader
+    mkdir /data/mac
 
     # Set indication (checked by vold) that we have finished this action
     setprop vold.post_fs_data_done 1
@@ -320,10 +328,13 @@ service wpa_supplicant /system/bin/wpa_supplicant \
 
 service p2p_supplicant /system/bin/wpa_supplicant \
     -iwlan0 -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf \
-    -I/system/etc/wifi/wpa_supplicant_overlay.conf -N \
-    -ip2p0 -Dnl80211 -c /data/misc/wifi/p2p_supplicant.conf \
     -I/system/etc/wifi/wpa_supplicant_overlay.conf \
-    -e/data/misc/wifi/entropy.bin -puse_p2p_group_interface=1
+    -O/data/misc/wifi/sockets \    
+    -O/data/misc/wifi/sockets -N \
+    -ip2p0 -Dnl80211 -c /data/misc/wifi/p2p_supplicant.conf \
+    -I/system/etc/wifi/p2p_supplicant_overlay.conf \
+    -puse_p2p_group_interface=1 -e/data/misc/wifi/entropy.bin \
+    -g@android:wpa_wlan0
 #   we will start as root and wpa_supplicant will switch to user wifi
 #   after setting up the capabilities required for WEXT
 #   user wifi
@@ -381,7 +392,7 @@ service iprenew_bt-pan /system/bin/dhcpcd -n
 #Sensor load calibration files end
 
 # virtual sdcard daemon running as media_rw (1023)
-service sdcard /system/bin/sdcard /data/media /mnt/shell/emulated 1023 1023
+service sdcard /system/bin/sdcard -u 1023 -g 1023 -l /data/media /mnt/shell/emulated
     class late_start
 
 # bugreport is triggered by the VOLUME-DOWN and VOLUME-UP keys
