@@ -1,4 +1,5 @@
 # Copyright (C) 2010 The Android Open Source Project
+# Copyright (C) 2013 The XPerience Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,6 +29,8 @@ $(call inherit-product, device/asus/grouper/device.mk)
 #$(call inherit-product, device/sample/products/backup_overlay.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
 
+TARGET_SCREEN_HEIGHT := 1280
+TARGET_SCREEN_WIDTH := 800
 
 # Discard inherited values and use our own instead.
 PRODUCT_NAME := omni_grouper
